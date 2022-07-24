@@ -1,4 +1,4 @@
-import { FlatList, Pressable, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 
 import { Text, View } from "../components/Themed";
 import { EDIT_TASK_ROUTE } from "../constants";
@@ -7,7 +7,6 @@ import { RootStackScreenProps } from "../types";
 
 export default function EditTaskScreen({
   navigation,
-  task,
 }: RootStackScreenProps<typeof EDIT_TASK_ROUTE>) {
   return (
     <View style={styles.container}>

@@ -9,14 +9,15 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createURL } from "expo-linking";
 import * as React from "react";
 import { ColorSchemeName } from "react-native";
 import { EDIT_TASK_ROUTE, ROOMS_ROUTE, TASKS_ROUTE } from "../constants";
+import EditTaskScreen from "../screens/EditTaskScreen";
 
 import RoomsScreen from "../screens/RoomsScreen";
 import TasksScreen from "../screens/TasksScreen";
 import { RootStackParamList } from "../types";
-import LinkingConfiguration from "./LinkingConfiguration";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -27,7 +28,16 @@ export default function Navigation({
 }) {
   return (
     <NavigationContainer
-      linking={LinkingConfiguration}
+      // linking={{
+      //   prefixes: [createURL("/")],
+      //   config: {
+      //     screens: {
+      //       Rooms: ROOMS_ROUTE,
+      //       Tasks: TASKS_ROUTE,
+      //       EditTask: EDIT_TASK_ROUTE,
+      //     },
+      //   },
+      // }}
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
     >
       <Stack.Navigator initialRouteName={ROOMS_ROUTE}>
@@ -37,13 +47,13 @@ export default function Navigation({
           // options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={TASKS_ROUTE}
+          name={"Tasks"}
           component={TasksScreen}
           // options={{ headerShown: false }}
         />
         <Stack.Screen
           name={EDIT_TASK_ROUTE}
-          component={TasksScreen}
+          component={EditTaskScreen}
           // options={{ headerShown: false }}
         />
       </Stack.Navigator>

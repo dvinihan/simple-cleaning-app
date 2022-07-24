@@ -7,17 +7,18 @@ import { RootStackScreenProps } from "../types";
 
 export default function TasksScreen({
   navigation,
-  tasks,
+  route,
 }: RootStackScreenProps<typeof TASKS_ROUTE>) {
+  const room = mockRooms.find((room) => room.id === route.params.roomId);
   return (
     <View style={styles.container}>
       <FlatList
-        data={tasks}
+        data={room?.tasks}
         renderItem={({ item }) => {
           return (
             <Pressable
               onPress={(e) => {
-                navigation.push(EDIT_TASK_ROUTE, item);
+                navigation.push(EDIT_TASK_ROUTE, { taskId: item.id });
               }}
             >
               <View style={styles.room}>

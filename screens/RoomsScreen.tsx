@@ -16,7 +16,7 @@ export default function RoomsScreen({
           return (
             <Pressable
               onPress={(e) => {
-                navigation.push("Tasks", { tasks: item.tasks });
+                navigation.push("Tasks", { roomId: item.id });
               }}
             >
               <View style={styles.room}>

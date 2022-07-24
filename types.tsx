@@ -13,19 +13,21 @@ declare global {
 
 export type RootStackParamList = {
   Rooms: undefined;
-  Tasks: { tasks: Task[] };
-  EditTask: { task: Task };
+  Tasks: { roomId: number };
+  EditTask: { taskId: number };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type Room = {
+  id: number;
   name: string;
   tasks: Task[];
 };
 
 export type Task = {
+  id: number;
   frequencyDays: number;
   lastDone: Date;
   name: string;
