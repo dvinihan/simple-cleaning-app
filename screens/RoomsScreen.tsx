@@ -12,15 +12,16 @@ export default function RoomsScreen({
     <View style={styles.container}>
       <FlatList
         data={mockRooms}
-        renderItem={({ item }) => {
+        renderItem={({ item: room }) => {
           return (
             <Pressable
+              key={`room-${room.id}`}
               onPress={(e) => {
-                navigation.push("Tasks", { roomId: item.id });
+                navigation.push("Tasks", { roomId: room.id });
               }}
             >
               <View style={styles.room}>
-                <Text style={styles.roomName}>{item.name}</Text>
+                <Text style={styles.roomName}>{room.name}</Text>
               </View>
             </Pressable>
           );

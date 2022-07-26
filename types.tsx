@@ -23,7 +23,6 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 export type Room = {
   id: number;
   name: string;
-  tasks: Task[];
 };
 
 export type Task = {
@@ -31,4 +30,5 @@ export type Task = {
   frequencyDays: number;
   lastDone: Date;
   name: string;
+  roomId: number;
 };

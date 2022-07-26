@@ -2,27 +2,30 @@ import { FlatList, Pressable, StyleSheet } from "react-native";
 
 import { Text, View } from "../components/Themed";
 import { EDIT_TASK_ROUTE, TASKS_ROUTE } from "../constants";
-import { mockRooms } from "../mock-data";
+import { mockTasks } from "../mock-data";
 import { RootStackScreenProps } from "../types";
 
 export default function TasksScreen({
   navigation,
   route,
 }: RootStackScreenProps<typeof TASKS_ROUTE>) {
-  const room = mockRooms.find((room) => room.id === route.params.roomId);
+  const tasks = mockTasks.filter((task) => task.roomId === route.params.roomId);
   return (
     <View style={styles.container}>
       <FlatList
-        data={room?.tasks}
-        renderItem={({ item }) => {
+        data={tasks}
+        renderItem={({ item: task }) => {
           return (
             <Pressable
+              key={`task-${task.id}`}
               onPress={(e) => {
-                navigation.push(EDIT_TASK_ROUTE, { taskId: item.id });
+                navigation.push(EDIT_TASK_ROUTE, {
+                  taskId: task.id,
+                });
               }}
             >
-              <View style={styles.room}>
-                <Text style={styles.roomName}>{item.name}</Text>
+              <View style={styles.task}>
+                <Text style={styles.taskName}>{task.name}</Text>
               </View>
             </Pressable>
           );
@@ -40,7 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   list: { width: "80%" },
-  room: {
+  task: {
     borderColor: "black",
     borderWidth: 1,
     height: "70px",
@@ -48,7 +51,7 @@ const styles = StyleSheet.create({
     padding: "8px",
     margin: "8px",
   },
-  roomName: {
+  taskName: {
     fontSize: 30,
   },
 });
