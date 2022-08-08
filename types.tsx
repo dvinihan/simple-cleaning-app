@@ -4,6 +4,7 @@
  */
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Frequency } from "./constants";
 
 declare global {
   namespace ReactNavigation {
@@ -31,14 +32,16 @@ export type Room = {
 
 export class Task {
   id: number;
-  frequencyDays: number;
+  frequencyAmount: number;
+  frequencyType: Frequency;
   lastDone: Date;
   name: string;
   roomId: number;
 
   constructor({ props }: { props?: Task }) {
     this.id = props?.id || 0;
-    this.frequencyDays = props?.frequencyDays || 0;
+    this.frequencyAmount = props?.frequencyAmount || 0;
+    this.frequencyType = props?.frequencyType || Frequency.DAYS;
     this.lastDone = props?.lastDone || new Date();
     this.name = props?.name || "";
     this.roomId = props?.roomId || 0;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import {
   Button,
   Dialog,
@@ -8,7 +8,7 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
-import { EDIT_TASK_ROUTE } from "../constants";
+import { EDIT_TASK_ROUTE, Frequency } from "../constants";
 import { mockRooms, mockTasks } from "../mock-data";
 import { Room, RootStackScreenProps, Task } from "../types";
 
@@ -17,7 +17,8 @@ export default function EditTaskScreen({
   route,
 }: RootStackScreenProps<typeof EDIT_TASK_ROUTE>) {
   const [task, setTask] = useState<Task>(new Task({}));
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [isRoomDialogVisible, setIsRoomDialogVisible] = useState(false);
+  const [isFreqialogVisible, setIsFreqDialogVisible] = useState(false);
 
   useEffect(() => {
     const initialTask = mockTasks.find(
@@ -26,12 +27,22 @@ export default function EditTaskScreen({
     initialTask && setTask(initialTask);
   }, []);
 
-  const showDialog = () => setIsDialogVisible(true);
-  const hideDialog = () => setIsDialogVisible(false);
+  const showDialog = () => setIsRoomDialogVisible(true);
+  const hideDialog = () => setIsRoomDialogVisible(false);
 
   const onSelectRoom = (room: Room) => {
-    setTask({ ...task, roomId: room.id });
+    setTask((t) => ({ ...t, roomId: room.id }));
     hideDialog();
+  };
+
+  const onSelectFrequency = (frequency: Frequency) => {
+    setTask((t) => ({ ...t, frequencyType: frequency }));
+  };
+
+  const save = () => {
+    // TODO dispatch POST call
+
+    navigation.goBack();
   };
 
   const roomName =
@@ -50,7 +61,62 @@ export default function EditTaskScreen({
           <Text style={styles.roomName}>Room: {roomName}</Text>
         </Surface>
       </Pressable>
-      <Dialog onDismiss={hideDialog} visible={isDialogVisible}>
+      <View style={styles.frequencyRow}>
+        <Text>Every</Text>
+        <TextInput
+          defaultValue={task.frequencyAmount?.toString()}
+          keyboardType="numeric"
+          onChangeText={(text) =>
+            setTask((t) => ({ ...t, frequencyAmount: parseInt(text) }))
+          }
+        />
+        <Button mode="outlined">{task.frequencyType}</Button>
+      </View>
+
+      <Button style={styles.saveButton} mode="contained" onPress={save}>
+        Save
+      </Button>
+
+      <Dialog onDismiss={hideDialog} visible={isFreqialogVisible}>
+        <RadioButton.Item
+          key="days-radio-button"
+          label={Frequency.DAYS}
+          onPress={() => onSelectFrequency(Frequency.DAYS)}
+          status={
+            task.frequencyType === Frequency.DAYS ? "checked" : "unchecked"
+          }
+          value={Frequency.DAYS}
+        />
+        <RadioButton.Item
+          key="weeks-radio-button"
+          label={Frequency.WEEKS}
+          onPress={() => onSelectFrequency(Frequency.WEEKS)}
+          status={
+            task.frequencyType === Frequency.WEEKS ? "checked" : "unchecked"
+          }
+          value={Frequency.WEEKS}
+        />
+        <RadioButton.Item
+          key="months-radio-button"
+          label={Frequency.MONTHS}
+          onPress={() => onSelectFrequency(Frequency.MONTHS)}
+          status={
+            task.frequencyType === Frequency.MONTHS ? "checked" : "unchecked"
+          }
+          value={Frequency.MONTHS}
+        />
+        <RadioButton.Item
+          key="years-radio-button"
+          label={Frequency.YEARS}
+          onPress={() => onSelectFrequency(Frequency.YEARS)}
+          status={
+            task.frequencyType === Frequency.YEARS ? "checked" : "unchecked"
+          }
+          value={Frequency.YEARS}
+        />
+      </Dialog>
+
+      <Dialog onDismiss={hideDialog} visible={isRoomDialogVisible}>
         <Dialog.Content>
           {mockRooms.map((room) => {
             return (
@@ -79,5 +145,12 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginBottom: "10px",
+  },
+  saveButton: {
+    marginTop: "10px",
+  },
+  frequencyRow: {
+    display: "flex",
+    flexDirection: "row",
   },
 });
