@@ -3,10 +3,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import { CustomNavigationBar } from "./CustomNavigationBar";
 import { EDIT_TASK_ROUTE, ROOMS_ROUTE } from "../constants";
-import EditTaskScreen from "../screens/EditTaskScreen";
+import EditTaskScreen from "./views/EditTaskScreen";
 
-import RoomsScreen from "../screens/RoomsScreen";
-import TasksScreen from "../screens/TasksScreen";
+import RoomsScreen from "./views/RoomsScreen";
+import TasksScreen from "./views/TasksScreen";
 import { RootStackParamList } from "../types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

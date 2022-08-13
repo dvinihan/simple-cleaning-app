@@ -25,10 +25,15 @@ export type RootStackParamList = {
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
-export type Room = {
+export class Room {
   id: number;
   name: string;
-};
+
+  constructor({ props }: { props?: Room }) {
+    this.id = props?.id || -1;
+    this.name = props?.name || "";
+  }
+}
 
 export class Task {
   id: number;
@@ -39,7 +44,7 @@ export class Task {
   roomId: number;
 
   constructor({ props }: { props?: Task }) {
-    this.id = props?.id || 0;
+    this.id = props?.id || -1;
     this.frequencyAmount = props?.frequencyAmount || 0;
     this.frequencyType = props?.frequencyType || Frequency.DAYS;
     this.lastDone = props?.lastDone || new Date();

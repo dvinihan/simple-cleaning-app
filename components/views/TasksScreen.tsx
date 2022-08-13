@@ -1,9 +1,9 @@
 import { StyleSheet } from "react-native";
 import { Card } from "react-native-paper";
 
-import { EDIT_TASK_ROUTE, TASKS_ROUTE } from "../constants";
-import { mockTasks } from "../mock-data";
-import { RootStackScreenProps } from "../types";
+import { EDIT_TASK_ROUTE, TASKS_ROUTE } from "../../constants";
+import { mockTasks } from "../../mock-data";
+import { RootStackScreenProps } from "../../types";
 
 export default function TasksScreen({
   navigation,

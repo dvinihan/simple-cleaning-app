@@ -8,9 +8,9 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
-import { EDIT_TASK_ROUTE, Frequency } from "../constants";
-import { mockRooms, mockTasks } from "../mock-data";
-import { Room, RootStackScreenProps, Task } from "../types";
+import { EDIT_TASK_ROUTE, Frequency } from "../../constants";
+import { mockRooms, mockTasks } from "../../mock-data";
+import { Room, RootStackScreenProps, Task } from "../../types";
 
 export default function EditTaskScreen({
   navigation,
@@ -18,7 +18,7 @@ export default function EditTaskScreen({
 }: RootStackScreenProps<typeof EDIT_TASK_ROUTE>) {
   const [task, setTask] = useState<Task>(new Task({}));
   const [isRoomDialogVisible, setIsRoomDialogVisible] = useState(false);
-  const [isFreqialogVisible, setIsFreqDialogVisible] = useState(false);
+  const [isFreqDialogVisible, setIsFreqDialogVisible] = useState(false);
 
   useEffect(() => {
     const initialTask = mockTasks.find(
@@ -27,16 +27,19 @@ export default function EditTaskScreen({
     initialTask && setTask(initialTask);
   }, []);
 
-  const showDialog = () => setIsRoomDialogVisible(true);
-  const hideDialog = () => setIsRoomDialogVisible(false);
+  const showRoomDialog = () => setIsRoomDialogVisible(true);
+  const hideRoomDialog = () => setIsRoomDialogVisible(false);
+  const showFreqDialog = () => setIsFreqDialogVisible(true);
+  const hideFreqDialog = () => setIsFreqDialogVisible(false);
 
   const onSelectRoom = (room: Room) => {
     setTask((t) => ({ ...t, roomId: room.id }));
-    hideDialog();
+    hideRoomDialog();
   };
 
   const onSelectFrequency = (frequency: Frequency) => {
     setTask((t) => ({ ...t, frequencyType: frequency }));
+    hideFreqDialog();
   };
 
   const save = () => {
@@ -56,7 +59,7 @@ export default function EditTaskScreen({
         onChangeText={(text) => setTask({ ...task, name: text })}
         style={styles.textInput}
       />
-      <Pressable onPress={showDialog}>
+      <Pressable onPress={showRoomDialog}>
         <Surface style={styles.room}>
           <Text style={styles.roomName}>Room: {roomName}</Text>
         </Surface>
@@ -70,14 +73,16 @@ export default function EditTaskScreen({
             setTask((t) => ({ ...t, frequencyAmount: parseInt(text) }))
           }
         />
-        <Button mode="outlined">{task.frequencyType}</Button>
+        <Button onPress={showFreqDialog} mode="outlined">
+          {task.frequencyType}
+        </Button>
       </View>
 
       <Button style={styles.saveButton} mode="contained" onPress={save}>
         Save
       </Button>
 
-      <Dialog onDismiss={hideDialog} visible={isFreqialogVisible}>
+      <Dialog onDismiss={hideFreqDialog} visible={isFreqDialogVisible}>
         <RadioButton.Item
           key="days-radio-button"
           label={Frequency.DAYS}
@@ -116,7 +121,7 @@ export default function EditTaskScreen({
         />
       </Dialog>
 
-      <Dialog onDismiss={hideDialog} visible={isRoomDialogVisible}>
+      <Dialog onDismiss={hideRoomDialog} visible={isRoomDialogVisible}>
         <Dialog.Content>
           {mockRooms.map((room) => {
             return (
@@ -152,5 +157,8 @@ const styles = StyleSheet.create({
   frequencyRow: {
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    marginVertical: "10px",
   },
 });
