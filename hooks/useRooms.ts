@@ -8,7 +8,6 @@ export const useRoomsQuery = () => {
       (res) => res.json()
     )
   );
-  console.log("rooms:", roomsQuery.data);
 
   const newData = sanitizeRoomsData(roomsQuery.data);
 

@@ -9,23 +9,28 @@ import {
   TextInput,
 } from "react-native-paper";
 import { EDIT_TASK_ROUTE, Frequency } from "../../constants";
-import { mockRooms, mockTasks } from "../../mock-data";
+import { useRoomsQuery } from "../../hooks/useRooms";
+import { useSaveTask } from "../../hooks/useSaveTask";
+import { useTasksQuery } from "../../hooks/useTasks";
 import { Room, RootStackScreenProps, Task } from "../../types";
 
 export default function EditTaskScreen({
   navigation,
   route,
 }: RootStackScreenProps<typeof EDIT_TASK_ROUTE>) {
-  const [task, setTask] = useState<Task>(new Task({}));
+  const [task, setTask] = useState<Task>(new Task());
   const [isRoomDialogVisible, setIsRoomDialogVisible] = useState(false);
   const [isFreqDialogVisible, setIsFreqDialogVisible] = useState(false);
 
   useEffect(() => {
-    const initialTask = mockTasks.find(
-      (task) => task.id === route.params.taskId
-    );
+    const initialTask = tasks.find((task) => task.id === route.params.taskId);
     initialTask && setTask(initialTask);
   }, []);
+
+  const { mutate: saveTask } = useSaveTask();
+
+  const { data: rooms } = useRoomsQuery();
+  const { data: tasks } = useTasksQuery();
 
   const showRoomDialog = () => setIsRoomDialogVisible(true);
   const hideRoomDialog = () => setIsRoomDialogVisible(false);
@@ -43,13 +48,11 @@ export default function EditTaskScreen({
   };
 
   const save = () => {
-    // TODO dispatch POST call
-
+    saveTask(task);
     navigation.goBack();
   };
 
-  const roomName =
-    mockRooms.find((room) => room.id === task.roomId)?.name ?? "";
+  const roomName = rooms.find((room) => room.id === task.roomId)?.name ?? "";
 
   return (
     <>
@@ -123,7 +126,7 @@ export default function EditTaskScreen({
 
       <Dialog onDismiss={hideRoomDialog} visible={isRoomDialogVisible}>
         <Dialog.Content>
-          {mockRooms.map((room) => {
+          {rooms.map((room) => {
             return (
               <RadioButton.Item
                 key={room.id}

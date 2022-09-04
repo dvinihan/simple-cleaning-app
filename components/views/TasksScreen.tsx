@@ -1,19 +1,17 @@
 import { StyleSheet } from "react-native";
 import { Card } from "react-native-paper";
-
 import { EDIT_TASK_ROUTE, TASKS_ROUTE } from "../../constants";
-import { mockTasks } from "../../mock-data";
+import { useTasksQuery } from "../../hooks/useTasks";
 import { RootStackScreenProps } from "../../types";
 
 export default function TasksScreen({
   navigation,
-  route,
 }: RootStackScreenProps<typeof TASKS_ROUTE>) {
-  const tasks = mockTasks.filter((task) => task.roomId === route.params.roomId);
+  const { data } = useTasksQuery();
 
   return (
     <>
-      {tasks.map((task) => (
+      {data.map((task) => (
         <Card
           key={task.id}
           mode="outlined"

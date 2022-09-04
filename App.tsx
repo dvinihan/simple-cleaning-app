@@ -1,10 +1,11 @@
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 import useCachedResources from "./hooks/useCachedResources";
 import Navigation from "./components/Navigation";
+import { StrictMode } from "react";
 
 const theme = {
   ...DefaultTheme,
@@ -24,14 +25,16 @@ export default function App() {
     return null;
   } else {
     return (
-      <QueryClientProvider client={queryClient}>
-        <SafeAreaProvider>
-          <PaperProvider theme={theme}>
-            <Navigation />
-          </PaperProvider>
-          <StatusBar />
-        </SafeAreaProvider>
-      </QueryClientProvider>
+      <StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaProvider>
+            <PaperProvider theme={theme}>
+              <Navigation />
+            </PaperProvider>
+            <StatusBar />
+          </SafeAreaProvider>
+        </QueryClientProvider>
+      </StrictMode>
     );
   }
 }

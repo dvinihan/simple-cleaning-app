@@ -29,7 +29,7 @@ export class Room {
   id: number;
   name: string;
 
-  constructor({ props }: { props?: Room }) {
+  constructor(props?: Room) {
     this.id = props?.id || -1;
     this.name = props?.name || "";
   }
@@ -43,7 +43,7 @@ export class Task {
   name: string;
   roomId: number;
 
-  constructor({ props }: { props?: Task }) {
+  constructor(props?: Task) {
     this.id = props?.id || -1;
     this.frequencyAmount = props?.frequencyAmount || 0;
     this.frequencyType = props?.frequencyType || Frequency.DAYS;
