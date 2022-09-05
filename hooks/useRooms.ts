@@ -1,17 +1,23 @@
 import { useQuery } from "react-query";
 import { Room } from "../types";
 import Constants from "expo-constants";
+import { ROOMS_QUERY_KEY } from "../constants";
 
 export const useRoomsQuery = () => {
-  const roomsQuery = useQuery("rooms", () =>
+  const roomsQuery = useQuery(ROOMS_QUERY_KEY, () =>
     fetch(`${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/rooms`).then(
       (res) => res.json()
     )
   );
 
-  const newData = sanitizeRoomsData(roomsQuery.data);
+  const { data = {} } = roomsQuery;
+  const sanitizedRooms = sanitizeRoomsData(data.rooms);
 
-  return { ...roomsQuery, data: newData };
+  return {
+    ...roomsQuery,
+    rooms: sanitizedRooms,
+    nextId: data.nextId,
+  };
 };
 
 const sanitizeRoomsData = (data: unknown) => {

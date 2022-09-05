@@ -1,9 +1,9 @@
-import { useMutation } from "react-query";
+import { useMutation, UseMutationOptions } from "react-query";
 import { Task } from "../types";
 import Constants from "expo-constants";
 
-export const useSaveTask = () => {
-  return useMutation(async (newTask: Task) => {
+export const useSaveTask = (options: UseMutationOptions<Task, any, Task>) => {
+  return useMutation<Task, any, Task>(async (newTask: Task) => {
     const response = await fetch(
       `${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/saveTask`,
       {
@@ -14,5 +14,5 @@ export const useSaveTask = () => {
     );
     const data = await response.json();
     return data;
-  });
+  }, options);
 };

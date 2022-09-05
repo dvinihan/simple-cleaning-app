@@ -2,35 +2,47 @@ import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import {
   Button,
+  Caption,
   Dialog,
   RadioButton,
   Surface,
   Text,
   TextInput,
 } from "react-native-paper";
-import { EDIT_TASK_ROUTE, Frequency } from "../../constants";
+import { useQueryClient } from "react-query";
+import { EDIT_TASK_ROUTE, Frequency, TASKS_QUERY_KEY } from "../../constants";
 import { useRoomsQuery } from "../../hooks/useRooms";
 import { useSaveTask } from "../../hooks/useSaveTask";
 import { useTasksQuery } from "../../hooks/useTasks";
 import { Room, RootStackScreenProps, Task } from "../../types";
 
+type TaskInputErrors = {
+  name?: string;
+};
+
 export default function EditTaskScreen({
   navigation,
   route,
 }: RootStackScreenProps<typeof EDIT_TASK_ROUTE>) {
-  const [task, setTask] = useState<Task>(new Task());
+  const queryClient = useQueryClient();
+  const { rooms } = useRoomsQuery();
+  const { tasks, nextId: nextTaskId } = useTasksQuery();
+  const { mutate: saveTask } = useSaveTask({
+    onSettled: () => {
+      queryClient.invalidateQueries(TASKS_QUERY_KEY);
+      navigation.goBack();
+    },
+  });
+
+  const [task, setTask] = useState(new Task());
   const [isRoomDialogVisible, setIsRoomDialogVisible] = useState(false);
   const [isFreqDialogVisible, setIsFreqDialogVisible] = useState(false);
+  const [errors, setErrors] = useState<TaskInputErrors>({});
 
   useEffect(() => {
     const initialTask = tasks.find((task) => task.id === route.params.taskId);
     initialTask && setTask(initialTask);
   }, []);
-
-  const { mutate: saveTask } = useSaveTask();
-
-  const { data: rooms } = useRoomsQuery();
-  const { data: tasks } = useTasksQuery();
 
   const showRoomDialog = () => setIsRoomDialogVisible(true);
   const hideRoomDialog = () => setIsRoomDialogVisible(false);
@@ -48,8 +60,11 @@ export default function EditTaskScreen({
   };
 
   const save = () => {
-    saveTask(task);
-    navigation.goBack();
+    if (!task.name) {
+      setErrors((e) => ({ ...e, name: "You must enter a task name" }));
+    } else {
+      saveTask({ ...task, id: route.params.taskId ?? nextTaskId });
+    }
   };
 
   const roomName = rooms.find((room) => room.id === task.roomId)?.name ?? "";
@@ -62,6 +77,7 @@ export default function EditTaskScreen({
         onChangeText={(text) => setTask({ ...task, name: text })}
         style={styles.textInput}
       />
+      {errors.name && <Caption style={styles.error}>{errors.name}</Caption>}
       <Pressable onPress={showRoomDialog}>
         <Surface style={styles.room}>
           <Text style={styles.roomName}>Room: {roomName}</Text>
@@ -163,5 +179,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     marginVertical: "10px",
+  },
+  error: {
+    marginHorizontal: "10px",
+    color: "red",
+    fontSize: 18,
   },
 });

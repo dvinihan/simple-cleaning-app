@@ -1,29 +1,35 @@
 import { StyleSheet } from "react-native";
 import { Card, FAB } from "react-native-paper";
-
-import { ROOMS_ROUTE } from "../../constants";
+import { EDIT_ROOM_ROUTE, ROOMS_ROUTE, TASKS_ROUTE } from "../../constants";
 import { useRoomsQuery } from "../../hooks/useRooms";
 import { RootStackScreenProps } from "../../types";
 
 export default function RoomsScreen({
   navigation,
 }: RootStackScreenProps<typeof ROOMS_ROUTE>) {
-  const { data } = useRoomsQuery();
+  const { rooms } = useRoomsQuery();
+
   return (
     <>
-      {data.map((room) => (
+      {rooms.map((room) => (
         <Card
           key={room.id}
           mode="outlined"
           onPress={() => {
-            navigation.push("Tasks", { roomId: room.id, title: room.name });
+            navigation.push(TASKS_ROUTE, { roomId: room.id, title: room.name });
           }}
           style={styles.card}
         >
           <Card.Title title={room.name} />
         </Card>
       ))}
-      <FAB icon="plus" style={styles.fab} />
+      <FAB
+        icon="plus"
+        onPress={() => {
+          navigation.push(EDIT_ROOM_ROUTE, { title: "New Room" });
+        }}
+        style={styles.fab}
+      />
     </>
   );
 }
