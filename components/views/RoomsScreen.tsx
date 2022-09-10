@@ -3,6 +3,7 @@ import { Card, FAB } from "react-native-paper";
 import { EDIT_ROOM_ROUTE, ROOMS_ROUTE, TASKS_ROUTE } from "../../constants";
 import { useRoomsQuery } from "../../hooks/useRooms";
 import { RootStackScreenProps } from "../../types";
+import { OverdueTasks } from "../OverdueTasks";
 
 export default function RoomsScreen({
   navigation,
@@ -11,6 +12,7 @@ export default function RoomsScreen({
 
   return (
     <>
+      <OverdueTasks />
       {rooms.map((room) => (
         <Card
           key={room.id}

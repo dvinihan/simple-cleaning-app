@@ -15,6 +15,11 @@ import { useRoomsQuery } from "../../hooks/useRooms";
 import { useSaveTask } from "../../hooks/useSaveTask";
 import { useTasksQuery } from "../../hooks/useTasks";
 import { Room, RootStackScreenProps, Task } from "../../types";
+import { DatePickerModal } from "react-native-paper-dates";
+import {
+  CalendarDate,
+  SingleChange,
+} from "react-native-paper-dates/lib/typescript/Date/Calendar";
 
 type TaskInputErrors = {
   name?: string;
@@ -37,6 +42,7 @@ export default function EditTaskScreen({
   const [task, setTask] = useState(new Task());
   const [isRoomDialogVisible, setIsRoomDialogVisible] = useState(false);
   const [isFreqDialogVisible, setIsFreqDialogVisible] = useState(false);
+  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [errors, setErrors] = useState<TaskInputErrors>({});
 
   useEffect(() => {
@@ -48,6 +54,8 @@ export default function EditTaskScreen({
   const hideRoomDialog = () => setIsRoomDialogVisible(false);
   const showFreqDialog = () => setIsFreqDialogVisible(true);
   const hideFreqDialog = () => setIsFreqDialogVisible(false);
+  const showDatePicker = () => setIsDatePickerVisible(true);
+  const hideDatePicker = () => setIsDatePickerVisible(false);
 
   const onSelectRoom = (room: Room) => {
     setTask((t) => ({ ...t, roomId: room.id }));
@@ -57,6 +65,18 @@ export default function EditTaskScreen({
   const onSelectFrequency = (frequency: Frequency) => {
     setTask((t) => ({ ...t, frequencyType: frequency }));
     hideFreqDialog();
+  };
+
+  const onChangeDate: SingleChange = (params) => {
+    const { date } = params;
+    if (date) {
+      setTask((t) => ({ ...t, lastDone: date }));
+      hideDatePicker();
+    }
+  };
+
+  const completeTask = () => {
+    setTask((t) => ({ ...t, lastDone: new Date() }));
   };
 
   const save = () => {
@@ -96,6 +116,21 @@ export default function EditTaskScreen({
           {task.frequencyType}
         </Button>
       </View>
+      <Pressable onPress={showDatePicker}>
+        <Surface style={styles.room}>
+          <Text style={styles.roomName}>
+            Last completed: {task.lastDone.toDateString()}
+          </Text>
+        </Surface>
+      </Pressable>
+      <Button
+        color="green"
+        onPress={completeTask}
+        style={styles.saveButton}
+        mode="contained"
+      >
+        Just did it!
+      </Button>
 
       <Button style={styles.saveButton} mode="contained" onPress={save}>
         Save
@@ -155,6 +190,15 @@ export default function EditTaskScreen({
           })}
         </Dialog.Content>
       </Dialog>
+
+      <DatePickerModal
+        locale="en"
+        mode="single"
+        visible={isDatePickerVisible}
+        onDismiss={hideDatePicker}
+        date={task.lastDone}
+        onConfirm={onChangeDate}
+      />
     </>
   );
 }
