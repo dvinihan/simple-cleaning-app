@@ -5,7 +5,7 @@ import Constants from "expo-constants";
 export const useSaveTask = (options: UseMutationOptions<Task, any, Task>) => {
   return useMutation<Task, any, Task>(async (newTask: Task) => {
     const response = await fetch(
-      `${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/saveTask`,
+      `${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/api/saveTask`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

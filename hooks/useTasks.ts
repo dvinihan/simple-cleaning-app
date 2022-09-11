@@ -5,9 +5,9 @@ import { TASKS_QUERY_KEY } from "../constants";
 
 export const useTasksQuery = () => {
   const tasksQuery = useQuery(TASKS_QUERY_KEY, () =>
-    fetch(`${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/tasks`).then(
-      (res) => res.json()
-    )
+    fetch(
+      `${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/api/tasks`
+    ).then((res) => res.json())
   );
 
   const { data = {} } = tasksQuery;

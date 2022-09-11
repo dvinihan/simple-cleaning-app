@@ -5,9 +5,9 @@ import { ROOMS_QUERY_KEY } from "../constants";
 
 export const useRoomsQuery = () => {
   const roomsQuery = useQuery(ROOMS_QUERY_KEY, () =>
-    fetch(`${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/rooms`).then(
-      (res) => res.json()
-    )
+    fetch(
+      `${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/api/rooms`
+    ).then((res) => res.json())
   );
 
   const { data = {} } = roomsQuery;

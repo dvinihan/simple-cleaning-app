@@ -7,7 +7,7 @@ export const useSaveRoom = (options: UseMutationOptions<Room, any, Room>) => {
     "saveRoom",
     async (newRoom: Room) => {
       const response = await fetch(
-        `${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/saveRoom`,
+        `${Constants.manifest?.extra?.SIMPLE_CLEANING_APP_API}/api/saveRoom`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
