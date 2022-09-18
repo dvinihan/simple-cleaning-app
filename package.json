@@ -8,8 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll",
-    "build:web": "expo build:web && cd web-build && vercel"
+    "test": "jest --watchAll"
   },
   "jest": {
     "preset": "jest-expo"
