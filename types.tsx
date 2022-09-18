@@ -25,7 +25,7 @@ export type ScreenParams = {
 export type RootStackParamList = {
   [ROOMS_ROUTE]: ScreenParams;
   [TASKS_ROUTE]: ScreenParams & { roomId: number };
-  [EDIT_TASK_ROUTE]: ScreenParams & { taskId?: number };
+  [EDIT_TASK_ROUTE]: ScreenParams & { taskId?: number; roomId?: number };
   [EDIT_ROOM_ROUTE]: ScreenParams & { roomId?: number };
 };
 
@@ -56,6 +56,6 @@ export class Task {
     this.frequencyType = props?.frequencyType ?? Frequency.DAYS;
     this.lastDone = props?.lastDone ? new Date(props.lastDone) : new Date();
     this.name = props?.name ?? "";
-    this.roomId = props?.roomId ?? 0;
+    this.roomId = props?.roomId ?? -1;
   }
 }

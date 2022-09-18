@@ -43,8 +43,12 @@ export default function EditTaskScreen({
   const [errors, setErrors] = useState<TaskInputErrors>({});
 
   useEffect(() => {
-    const initialTask = tasks.find((task) => task.id === route.params.taskId);
-    initialTask && setTask(initialTask);
+    const initialTask =
+      tasks.find((task) => task.id === route.params.taskId) ?? new Task();
+
+    const roomId = route.params.roomId ?? initialTask?.roomId ?? task.roomId;
+
+    setTask({ ...initialTask, roomId });
   }, []);
 
   const showRoomDialog = () => setIsRoomDialogVisible(true);
@@ -85,6 +89,10 @@ export default function EditTaskScreen({
   };
 
   const roomName = rooms.find((room) => room.id === task.roomId)?.name ?? "";
+
+  if (!task) {
+    return null;
+  }
 
   return (
     <>

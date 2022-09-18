@@ -34,7 +34,10 @@ export default function TasksScreen({
       <FAB
         icon="plus"
         onPress={() => {
-          navigation.push(EDIT_TASK_ROUTE, { title: "New Task" });
+          navigation.push(EDIT_TASK_ROUTE, {
+            title: "New Task",
+            roomId: route.params.roomId,
+          });
         }}
         style={styles.fab}
       />

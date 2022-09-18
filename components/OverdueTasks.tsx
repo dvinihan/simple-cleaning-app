@@ -1,7 +1,7 @@
 import { Frequency } from "../constants";
 import { useTasksQuery } from "../hooks/useTasks";
 import { Task } from "../types";
-import { add, formatDistance, isAfter } from "date-fns";
+import { add, differenceInDays, formatDuration } from "date-fns";
 import { Card, Headline, Text } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { useMemo } from "react";
@@ -34,34 +34,44 @@ const getNextDueDate = (task: Task) => {
   return add(task.lastDone, { days: frequencyInDays });
 };
 
-const getIsTaskOverdue = (task: Task) => {
+const getOverdueDays = (task: Task) => {
   const nextDue = getNextDueDate(task);
-  return isAfter(new Date(), nextDue);
+  // coudl also use differenceInCalendarDays: https://date-fns.org/v2.29.3/docs/differenceInCalendarDays
+  return differenceInDays(new Date(), nextDue);
 };
 
 const getOverdueAmount = (task: Task) => {
-  const nextDue = getNextDueDate(task);
-  return formatDistance(nextDue, new Date());
+  const overdueDays = getOverdueDays(task);
+  return formatDuration({ days: overdueDays });
 };
+
+type TaskWithOverdueness = Task & { daysOverdue: number };
 
 export const OverdueTasks = () => {
   const { tasks } = useTasksQuery();
 
-  const overdueTasks = useMemo(() => tasks.filter(getIsTaskOverdue), [tasks]);
+  const tasksWithOverdueness: TaskWithOverdueness[] = tasks.map((t) => ({
+    ...t,
+    daysOverdue: getOverdueDays(t),
+  }));
 
-  return (
+  const isTaskOverdue = (t: TaskWithOverdueness) => t.daysOverdue > 0;
+  const hasOverdueTasks = tasksWithOverdueness.some(isTaskOverdue);
+  const overdueTasks = tasksWithOverdueness.filter(isTaskOverdue);
+
+  return hasOverdueTasks ? (
     <Card style={styles.card}>
       <Headline>Overdue tasks:</Headline>
       <ul>
         {overdueTasks.map((task) => (
-          <li>
+          <li key={task.id}>
             <Text>{task.name}, </Text>
             <Text style={styles.bold}>{getOverdueAmount(task)} overdue</Text>
           </li>
         ))}
       </ul>
     </Card>
-  );
+  ) : null;
 };
 
 const styles = StyleSheet.create({
