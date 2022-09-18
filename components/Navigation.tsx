@@ -2,7 +2,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import { CustomNavigationBar } from "./CustomNavigationBar";
-import { EDIT_ROOM_ROUTE, EDIT_TASK_ROUTE, ROOMS_ROUTE } from "../constants";
+import {
+  EDIT_ROOM_ROUTE,
+  EDIT_TASK_ROUTE,
+  ROOMS_ROUTE,
+  TASKS_ROUTE,
+} from "../constants";
 import EditTaskScreen from "./views/EditTaskScreen";
 
 import RoomsScreen from "./views/RoomsScreen";
@@ -22,7 +27,7 @@ export default function Navigation() {
         }}
       >
         <Stack.Screen name={ROOMS_ROUTE} component={RoomsScreen} />
-        <Stack.Screen name={"Tasks"} component={TasksScreen} />
+        <Stack.Screen name={TASKS_ROUTE} component={TasksScreen} />
         <Stack.Screen name={EDIT_TASK_ROUTE} component={EditTaskScreen} />
         <Stack.Screen name={EDIT_ROOM_ROUTE} component={EditRoomScreen} />
       </Stack.Navigator>

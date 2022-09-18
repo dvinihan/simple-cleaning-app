@@ -23,7 +23,7 @@ export default function TasksScreen({
           onPress={() => {
             navigation.push(EDIT_TASK_ROUTE, {
               taskId: task.id,
-              title: task.name,
+              title: "Edit Task",
             });
           }}
           style={styles.card}

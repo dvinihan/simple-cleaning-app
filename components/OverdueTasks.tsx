@@ -4,6 +4,7 @@ import { Task } from "../types";
 import { add, formatDistance, isAfter } from "date-fns";
 import { Card, Headline, Text } from "react-native-paper";
 import { StyleSheet } from "react-native";
+import { useMemo } from "react";
 
 const getFrequencyInDays = (
   frequencyType: Frequency,
@@ -35,7 +36,7 @@ const getNextDueDate = (task: Task) => {
 
 const getIsTaskOverdue = (task: Task) => {
   const nextDue = getNextDueDate(task);
-  return isAfter(nextDue, new Date());
+  return isAfter(new Date(), nextDue);
 };
 
 const getOverdueAmount = (task: Task) => {
@@ -46,7 +47,7 @@ const getOverdueAmount = (task: Task) => {
 export const OverdueTasks = () => {
   const { tasks } = useTasksQuery();
 
-  const overdueTasks = tasks.filter(getIsTaskOverdue);
+  const overdueTasks = useMemo(() => tasks.filter(getIsTaskOverdue), [tasks]);
 
   return (
     <Card style={styles.card}>

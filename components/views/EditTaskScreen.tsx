@@ -16,10 +16,7 @@ import { useSaveTask } from "../../hooks/useSaveTask";
 import { useTasksQuery } from "../../hooks/useTasks";
 import { Room, RootStackScreenProps, Task } from "../../types";
 import { DatePickerModal } from "react-native-paper-dates";
-import {
-  CalendarDate,
-  SingleChange,
-} from "react-native-paper-dates/lib/typescript/Date/Calendar";
+import { SingleChange } from "react-native-paper-dates/lib/typescript/Date/Calendar";
 
 type TaskInputErrors = {
   name?: string;
@@ -106,11 +103,12 @@ export default function EditTaskScreen({
       <View style={styles.frequencyRow}>
         <Text>Every</Text>
         <TextInput
-          defaultValue={task.frequencyAmount?.toString()}
+          value={task.frequencyAmount?.toString()}
           keyboardType="numeric"
-          onChangeText={(text) =>
-            setTask((t) => ({ ...t, frequencyAmount: parseInt(text) }))
-          }
+          onChangeText={(text) => {
+            const newAmount = text ? parseInt(text) : 0;
+            setTask((t) => ({ ...t, frequencyAmount: newAmount }));
+          }}
         />
         <Button onPress={showFreqDialog} mode="outlined">
           {task.frequencyType}

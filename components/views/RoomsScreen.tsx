@@ -18,7 +18,10 @@ export default function RoomsScreen({
           key={room.id}
           mode="outlined"
           onPress={() => {
-            navigation.push(TASKS_ROUTE, { roomId: room.id, title: room.name });
+            navigation.push(TASKS_ROUTE, {
+              roomId: room.id,
+              title: "Edit Room",
+            });
           }}
           style={styles.card}
         >
