@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { Card, FAB } from "react-native-paper";
-import { EDIT_TASK_ROUTE, TASKS_ROUTE } from "../../constants";
+import { EDIT_ROOM_ROUTE, EDIT_TASK_ROUTE, TASKS_ROUTE } from "../../constants";
 import { useTasksQuery } from "../../hooks/useTasks";
 import { RootStackScreenProps } from "../../types";
 
@@ -39,7 +39,17 @@ export default function TasksScreen({
             roomId: route.params.roomId,
           });
         }}
-        style={styles.fab}
+        style={styles.plusFab}
+      />
+      <FAB
+        icon="pencil"
+        onPress={() => {
+          navigation.push(EDIT_ROOM_ROUTE, {
+            title: "Edit Room",
+            roomId: route.params.roomId,
+          });
+        }}
+        style={styles.editFab}
       />
     </>
   );
@@ -50,10 +60,16 @@ const styles = StyleSheet.create({
     marginTop: "10px",
     marginHorizontal: "10px",
   },
-  fab: {
+  plusFab: {
     position: "absolute",
     margin: 16,
     right: 0,
+    bottom: 0,
+  },
+  editFab: {
+    position: "absolute",
+    margin: 16,
+    right: 72,
     bottom: 0,
   },
 });

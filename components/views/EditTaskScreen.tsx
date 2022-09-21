@@ -4,6 +4,8 @@ import {
   Button,
   Caption,
   Dialog,
+  FAB,
+  Modal,
   RadioButton,
   Surface,
   Text,
@@ -17,6 +19,7 @@ import { useTasksQuery } from "../../hooks/useTasks";
 import { Room, RootStackScreenProps, Task } from "../../types";
 import { DatePickerModal } from "react-native-paper-dates";
 import { SingleChange } from "react-native-paper-dates/lib/typescript/Date/Calendar";
+import { useDeleteTask } from "../../hooks/useDeleteTask";
 
 type TaskInputErrors = {
   name?: string;
@@ -35,11 +38,19 @@ export default function EditTaskScreen({
       navigation.goBack();
     },
   });
+  const { mutate: doDelete } = useDeleteTask({
+    onSettled: () => {
+      queryClient.invalidateQueries(TASKS_QUERY_KEY);
+      navigation.goBack();
+    },
+  });
 
   const [task, setTask] = useState(new Task());
   const [isRoomDialogVisible, setIsRoomDialogVisible] = useState(false);
   const [isFreqDialogVisible, setIsFreqDialogVisible] = useState(false);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
+
   const [errors, setErrors] = useState<TaskInputErrors>({});
 
   useEffect(() => {
@@ -86,6 +97,10 @@ export default function EditTaskScreen({
     } else {
       saveTask({ ...task, id: route.params.taskId ?? nextTaskId });
     }
+  };
+
+  const deleteTask = () => {
+    doDelete(task.id);
   };
 
   const roomName = rooms.find((room) => room.id === task.roomId)?.name ?? "";
@@ -205,6 +220,28 @@ export default function EditTaskScreen({
         date={task.lastDone}
         onConfirm={onChangeDate}
       />
+
+      <FAB
+        icon="delete"
+        onPress={() => {
+          setShouldShowDeleteModal(true);
+        }}
+        style={styles.fab}
+      />
+      <Dialog
+        onDismiss={() => setShouldShowDeleteModal(false)}
+        visible={shouldShowDeleteModal}
+      >
+        <Dialog.Content>
+          <Dialog.Title>
+            Are you sure you want to delete this task?
+          </Dialog.Title>
+          <Dialog.Actions>
+            <Button onPress={deleteTask}>Yes</Button>
+            <Button onPress={() => setShouldShowDeleteModal(false)}>No</Button>
+          </Dialog.Actions>
+        </Dialog.Content>
+      </Dialog>
     </>
   );
 }
@@ -234,5 +271,11 @@ const styles = StyleSheet.create({
     marginHorizontal: "10px",
     color: "red",
     fontSize: 18,
+  },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });

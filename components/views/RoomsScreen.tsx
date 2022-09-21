@@ -33,7 +33,7 @@ export default function RoomsScreen({
         onPress={() => {
           navigation.push(EDIT_ROOM_ROUTE, { title: "New Room" });
         }}
-        style={styles.fab}
+        style={styles.plusFab}
       />
     </>
   );
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     marginTop: "10px",
     marginHorizontal: "10px",
   },
-  fab: {
+  plusFab: {
     position: "absolute",
     margin: 16,
     right: 0,

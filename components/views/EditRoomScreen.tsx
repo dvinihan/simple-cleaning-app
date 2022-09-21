@@ -4,11 +4,14 @@ import {
   ActivityIndicator,
   Button,
   Caption,
+  Dialog,
+  FAB,
   Modal,
   TextInput,
 } from "react-native-paper";
 import { useQueryClient } from "react-query";
-import { EDIT_ROOM_ROUTE, ROOMS_QUERY_KEY } from "../../constants";
+import { EDIT_ROOM_ROUTE, ROOMS_QUERY_KEY, ROOMS_ROUTE } from "../../constants";
+import { useDeleteRoom } from "../../hooks/useDeleteRoom";
 import { useRoomsQuery } from "../../hooks/useRooms";
 import { useSaveRoom } from "../../hooks/useSaveRoom";
 import { Room, RootStackScreenProps } from "../../types";
@@ -29,9 +32,16 @@ export default function EditRoomScreen({
       navigation.goBack();
     },
   });
+  const { mutate: doDelete } = useDeleteRoom({
+    onSettled: () => {
+      queryClient.invalidateQueries(ROOMS_QUERY_KEY);
+      navigation.push(ROOMS_ROUTE, {});
+    },
+  });
 
   const [room, setRoom] = useState(new Room());
   const [errors, setErrors] = useState<RoomInputErrors>({});
+  const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
 
   useEffect(() => {
     const initialRoom = rooms.find((room) => room.id === route.params.roomId);
@@ -44,6 +54,10 @@ export default function EditRoomScreen({
     } else {
       saveRoom({ ...room, id: route.params.roomId ?? nextId });
     }
+  };
+
+  const deleteRoom = () => {
+    doDelete(room.id);
   };
 
   return (
@@ -61,6 +75,28 @@ export default function EditRoomScreen({
       <Modal visible={isLoading}>
         <ActivityIndicator size="large" />
       </Modal>
+
+      <FAB
+        icon="delete"
+        onPress={() => {
+          setShouldShowDeleteModal(true);
+        }}
+        style={styles.fab}
+      />
+      <Dialog
+        onDismiss={() => setShouldShowDeleteModal(false)}
+        visible={shouldShowDeleteModal}
+      >
+        <Dialog.Content>
+          <Dialog.Title>
+            Are you sure you want to delete this room?
+          </Dialog.Title>
+          <Dialog.Actions>
+            <Button onPress={deleteRoom}>Yes</Button>
+            <Button onPress={() => setShouldShowDeleteModal(false)}>No</Button>
+          </Dialog.Actions>
+        </Dialog.Content>
+      </Dialog>
     </>
   );
 }
@@ -76,5 +112,11 @@ const styles = StyleSheet.create({
     marginHorizontal: "10px",
     color: "red",
     fontSize: 18,
+  },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
