@@ -14,12 +14,18 @@ import RoomsScreen from "./views/RoomsScreen";
 import TasksScreen from "./views/TasksScreen";
 import { RootStackParamList } from "../types";
 import EditRoomScreen from "./views/EditRoomScreen";
+import * as Linking from "expo-linking";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const prefix = Linking.createURL("/");
 
 export default function Navigation() {
+  const linking = {
+    prefixes: [prefix],
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator
         initialRouteName={ROOMS_ROUTE}
         screenOptions={{

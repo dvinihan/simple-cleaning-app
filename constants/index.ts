@@ -1,7 +1,7 @@
-export const ROOMS_ROUTE = "Rooms";
-export const TASKS_ROUTE = "Tasks";
-export const EDIT_TASK_ROUTE = "EditTask";
-export const EDIT_ROOM_ROUTE = "EditRoom";
+export const ROOMS_ROUTE = "rooms";
+export const TASKS_ROUTE = "tasks";
+export const EDIT_TASK_ROUTE = "editTask";
+export const EDIT_ROOM_ROUTE = "editRoom";
 
 export const ROOMS_QUERY_KEY = "rooms";
 export const TASKS_QUERY_KEY = "tasks";
