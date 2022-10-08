@@ -9,7 +9,6 @@ import {
   TASKS_ROUTE,
 } from "../constants";
 import EditTaskScreen from "./views/EditTaskScreen";
-
 import RoomsScreen from "./views/RoomsScreen";
 import TasksScreen from "./views/TasksScreen";
 import { RootStackParamList } from "../types";
@@ -32,7 +31,11 @@ export default function Navigation() {
           header: (props) => <CustomNavigationBar {...props} />,
         }}
       >
-        <Stack.Screen name={ROOMS_ROUTE} component={RoomsScreen} />
+        <Stack.Screen
+          name={ROOMS_ROUTE}
+          component={RoomsScreen}
+          initialParams={{ title: "Simple Cleaning App" }}
+        />
         <Stack.Screen name={TASKS_ROUTE} component={TasksScreen} />
         <Stack.Screen name={EDIT_TASK_ROUTE} component={EditTaskScreen} />
         <Stack.Screen name={EDIT_ROOM_ROUTE} component={EditRoomScreen} />

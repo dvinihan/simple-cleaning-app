@@ -1,10 +1,11 @@
-import { Frequency } from "../constants";
+import { editTaskTitle, EDIT_TASK_ROUTE, Frequency } from "../constants";
 import { useTasksQuery } from "../hooks/useTasks";
 import { Task } from "../types";
 import { add, differenceInDays, formatDuration } from "date-fns";
 import { Card, Headline, Text } from "react-native-paper";
 import { StyleSheet } from "react-native";
-import { useMemo } from "react";
+import { useRoomsQuery } from "../hooks/useRooms";
+import { Link } from "@react-navigation/native";
 
 const getFrequencyInDays = (
   frequencyType: Frequency,
@@ -49,6 +50,7 @@ type TaskWithOverdueness = Task & { daysOverdue: number };
 
 export const OverdueTasks = () => {
   const { tasks } = useTasksQuery();
+  const { rooms } = useRoomsQuery();
 
   const tasksWithOverdueness: TaskWithOverdueness[] = tasks.map((t) => ({
     ...t,
@@ -60,29 +62,40 @@ export const OverdueTasks = () => {
   const overdueTasks = tasksWithOverdueness.filter(isTaskOverdue);
 
   return hasOverdueTasks ? (
-    <Card style={styles.card}>
+    <Card style={styles.container}>
       <Headline>Overdue tasks:</Headline>
-      <ul>
-        {overdueTasks.map((task) => (
-          <li key={task.id}>
-            <Text>{task.name}, </Text>
-            <Text style={styles.bold}>{getOverdueAmount(task)} overdue</Text>
-          </li>
-        ))}
-      </ul>
+      {overdueTasks.map((task) => {
+        const room = rooms.find((r) => r.id === task.roomId);
+        return (
+          <Card key={task.id} style={styles.task}>
+            <Link
+              to={`/${EDIT_TASK_ROUTE}?taskId=${task.id}&title=${editTaskTitle}`}
+            >
+              <Text style={styles.bold}>
+                {task.name} in {room?.name},{" "}
+              </Text>
+              <Text style={styles.red}>{getOverdueAmount(task)} overdue</Text>
+            </Link>
+          </Card>
+        );
+      })}
     </Card>
   ) : null;
 };
 
 const styles = StyleSheet.create({
-  card: {
+  container: {
     marginTop: "10px",
     marginHorizontal: "10px",
     padding: "10px",
     backgroundColor: "lightyellow",
   },
-  overdueTask: {
-    fontSize: 16,
+  task: {
+    padding: "6px",
+    marginVertical: "6px",
+  },
+  red: {
+    color: "red",
   },
   bold: {
     fontWeight: "bold",

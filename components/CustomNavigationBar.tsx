@@ -12,11 +12,10 @@ export const CustomNavigationBar = ({
   navigation,
   route,
 }: StackHeaderProps) => {
-  const title = route.params?.title ?? route.name;
   return (
     <Appbar.Header>
       {back && <Appbar.BackAction onPress={navigation.goBack} />}
-      <Appbar.Content title={title} />
+      <Appbar.Content title={route.params?.title} />
     </Appbar.Header>
   );
 };

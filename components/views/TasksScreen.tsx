@@ -1,6 +1,11 @@
 import { StyleSheet } from "react-native";
 import { Card, FAB } from "react-native-paper";
-import { EDIT_ROOM_ROUTE, EDIT_TASK_ROUTE, TASKS_ROUTE } from "../../constants";
+import {
+  editTaskTitle,
+  EDIT_ROOM_ROUTE,
+  EDIT_TASK_ROUTE,
+  TASKS_ROUTE,
+} from "../../constants";
 import { useTasksQuery } from "../../hooks/useTasks";
 import { RootStackScreenProps } from "../../types";
 
@@ -23,7 +28,7 @@ export default function TasksScreen({
           onPress={() => {
             navigation.push(EDIT_TASK_ROUTE, {
               taskId: task.id,
-              title: "Edit Task",
+              title: editTaskTitle,
             });
           }}
           style={styles.card}
