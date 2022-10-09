@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Card, FAB } from "react-native-paper";
 import {
   editTaskTitle,
@@ -21,21 +21,23 @@ export default function TasksScreen({
 
   return (
     <>
-      {tasksInRoom.map((task) => (
-        <Card
-          key={task.id}
-          mode="outlined"
-          onPress={() => {
-            navigation.push(EDIT_TASK_ROUTE, {
-              taskId: task.id,
-              title: editTaskTitle,
-            });
-          }}
-          style={styles.card}
-        >
-          <Card.Title title={task.name} />
-        </Card>
-      ))}
+      <ScrollView>
+        {tasksInRoom.map((task) => (
+          <Card
+            key={task.id}
+            mode="outlined"
+            onPress={() => {
+              navigation.push(EDIT_TASK_ROUTE, {
+                taskId: task.id,
+                title: editTaskTitle,
+              });
+            }}
+            style={styles.card}
+          >
+            <Card.Title title={task.name} />
+          </Card>
+        ))}
+      </ScrollView>
       <FAB
         icon="plus"
         onPress={() => {

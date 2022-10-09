@@ -37,7 +37,7 @@ const getNextDueDate = (task: Task) => {
 
 const getOverdueDays = (task: Task) => {
   const nextDue = getNextDueDate(task);
-  // coudl also use differenceInCalendarDays: https://date-fns.org/v2.29.3/docs/differenceInCalendarDays
+  // could also use differenceInCalendarDays: https://date-fns.org/v2.29.3/docs/differenceInCalendarDays
   return differenceInDays(new Date(), nextDue);
 };
 
@@ -71,9 +71,9 @@ export const OverdueTasks = () => {
             <Link
               to={`/${EDIT_TASK_ROUTE}?taskId=${task.id}&title=${editTaskTitle}`}
             >
-              <Text style={styles.bold}>
-                {task.name} in {room?.name},{" "}
-              </Text>
+              <Text style={styles.bold}>{task.name}</Text>
+              <Text> in </Text>
+              <Text style={styles.bold}>{room?.name}, </Text>
               <Text style={styles.red}>{getOverdueAmount(task)} overdue</Text>
             </Link>
           </Card>

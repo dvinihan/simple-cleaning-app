@@ -10,7 +10,12 @@ import {
   TextInput,
 } from "react-native-paper";
 import { useQueryClient } from "react-query";
-import { EDIT_ROOM_ROUTE, ROOMS_QUERY_KEY, ROOMS_ROUTE } from "../../constants";
+import {
+  EDIT_ROOM_ROUTE,
+  ROOMS_QUERY_KEY,
+  ROOMS_ROUTE,
+  TASKS_ROUTE,
+} from "../../constants";
 import { useDeleteRoom } from "../../hooks/useDeleteRoom";
 import { useRoomsQuery } from "../../hooks/useRooms";
 import { useSaveRoom } from "../../hooks/useSaveRoom";
@@ -26,10 +31,14 @@ export default function EditRoomScreen({
 }: RootStackScreenProps<typeof EDIT_ROOM_ROUTE>) {
   const queryClient = useQueryClient();
   const { rooms, nextId } = useRoomsQuery();
+  const roomId = route.params.roomId ?? nextId;
   const { mutate: saveRoom, isLoading } = useSaveRoom({
     onSettled: () => {
       queryClient.invalidateQueries(ROOMS_QUERY_KEY);
-      navigation.goBack();
+      navigation.push(TASKS_ROUTE, {
+        roomId,
+        title: room.name,
+      });
     },
   });
   const { mutate: doDelete } = useDeleteRoom({
@@ -52,7 +61,7 @@ export default function EditRoomScreen({
     if (!room.name) {
       setErrors((e) => ({ ...e, name: "You must enter a room name" }));
     } else {
-      saveRoom({ ...room, id: route.params.roomId ?? nextId });
+      saveRoom({ ...room, id: roomId });
     }
   };
 

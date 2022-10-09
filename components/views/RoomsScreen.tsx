@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { FlatList, ScrollView, StyleSheet } from "react-native";
 import { Card, FAB } from "react-native-paper";
 import { EDIT_ROOM_ROUTE, ROOMS_ROUTE, TASKS_ROUTE } from "../../constants";
 import { useRoomsQuery } from "../../hooks/useRooms";
@@ -12,22 +12,24 @@ export default function RoomsScreen({
 
   return (
     <>
-      <OverdueTasks />
-      {rooms.map((room) => (
-        <Card
-          key={room.id}
-          mode="outlined"
-          onPress={() => {
-            navigation.push(TASKS_ROUTE, {
-              roomId: room.id,
-              title: room.name,
-            });
-          }}
-          style={styles.card}
-        >
-          <Card.Title title={room.name} />
-        </Card>
-      ))}
+      <ScrollView>
+        <OverdueTasks />
+        {rooms.map((room) => (
+          <Card
+            key={room.id}
+            mode="outlined"
+            onPress={() => {
+              navigation.push(TASKS_ROUTE, {
+                roomId: room.id,
+                title: room.name,
+              });
+            }}
+            style={styles.card}
+          >
+            <Card.Title title={room.name} />
+          </Card>
+        ))}
+      </ScrollView>
       <FAB
         icon="plus"
         onPress={() => {

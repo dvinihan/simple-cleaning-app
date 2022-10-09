@@ -53,7 +53,7 @@ export class Task {
   constructor(props?: Task) {
     this.id = props?.id ?? -1;
     this.frequencyAmount = props?.frequencyAmount ?? 0;
-    this.frequencyType = props?.frequencyType ?? Frequency.DAYS;
+    this.frequencyType = props?.frequencyType ?? Frequency.WEEKS;
     this.lastDone = props?.lastDone ? new Date(props.lastDone) : new Date();
     this.name = props?.name ?? "";
     this.roomId = props?.roomId ?? -1;
