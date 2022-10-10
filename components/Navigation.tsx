@@ -18,15 +18,24 @@ import * as Linking from "expo-linking";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const prefix = Linking.createURL("/");
 
-export default function Navigation() {
-  const linking = {
-    prefixes: [prefix],
-  };
+const config = {
+  screens: {
+    [ROOMS_ROUTE]: "",
+    [TASKS_ROUTE]: TASKS_ROUTE,
+    [EDIT_TASK_ROUTE]: EDIT_TASK_ROUTE,
+    [EDIT_ROOM_ROUTE]: EDIT_ROOM_ROUTE,
+  },
+};
 
+const linking = {
+  prefixes: [prefix],
+  config,
+};
+
+export default function Navigation() {
   return (
     <NavigationContainer linking={linking}>
       <Stack.Navigator
-        initialRouteName={ROOMS_ROUTE}
         screenOptions={{
           header: (props) => <CustomNavigationBar {...props} />,
         }}
@@ -34,7 +43,7 @@ export default function Navigation() {
         <Stack.Screen
           name={ROOMS_ROUTE}
           component={RoomsScreen}
-          initialParams={{ title: "Simple Cleaning App" }}
+          options={{ title: "Simple Cleaning App" }}
         />
         <Stack.Screen name={TASKS_ROUTE} component={TasksScreen} />
         <Stack.Screen name={EDIT_TASK_ROUTE} component={EditTaskScreen} />

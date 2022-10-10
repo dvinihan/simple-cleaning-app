@@ -11,11 +11,12 @@ export const CustomNavigationBar = ({
   back,
   navigation,
   route,
+  options,
 }: StackHeaderProps) => {
   return (
     <Appbar.Header>
       {back && <Appbar.BackAction onPress={navigation.goBack} />}
-      <Appbar.Content title={route.params?.title} />
+      <Appbar.Content title={options.title ?? route.params?.title} />
     </Appbar.Header>
   );
 };
