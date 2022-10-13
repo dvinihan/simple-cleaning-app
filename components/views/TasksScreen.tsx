@@ -6,22 +6,25 @@ import {
   EDIT_TASK_ROUTE,
   TASKS_ROUTE,
 } from "../../constants";
+import { getRoomIdFromUrl } from "../../helpers/url";
 import { useTasksQuery } from "../../hooks/useTasks";
 import { RootStackScreenProps } from "../../types";
+import { OverdueTasks } from "../OverdueTasks";
 
 export default function TasksScreen({
   navigation,
   route,
 }: RootStackScreenProps<typeof TASKS_ROUTE>) {
+  const urlRoomId = getRoomIdFromUrl(route);
+
   const { tasks } = useTasksQuery();
 
-  const tasksInRoom = tasks.filter(
-    (task) => task.roomId === route.params.roomId
-  );
+  const tasksInRoom = tasks.filter((task) => task.roomId === urlRoomId);
 
   return (
     <>
       <ScrollView>
+        <OverdueTasks roomId={urlRoomId} />
         {tasksInRoom.map((task) => (
           <Card
             key={task.id}
@@ -43,7 +46,7 @@ export default function TasksScreen({
         onPress={() => {
           navigation.push(EDIT_TASK_ROUTE, {
             title: "New Task",
-            roomId: route.params.roomId,
+            roomId: urlRoomId,
           });
         }}
         style={styles.plusFab}
@@ -53,7 +56,7 @@ export default function TasksScreen({
         onPress={() => {
           navigation.push(EDIT_ROOM_ROUTE, {
             title: "Edit Room",
-            roomId: route.params.roomId,
+            roomId: urlRoomId,
           });
         }}
         style={styles.editFab}

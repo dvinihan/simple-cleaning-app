@@ -20,6 +20,7 @@ import { Room, RootStackScreenProps, Task } from "../../types";
 import { DatePickerModal } from "react-native-paper-dates";
 import { SingleChange } from "react-native-paper-dates/lib/typescript/Date/Calendar";
 import { useDeleteTask } from "../../hooks/useDeleteTask";
+import { getRoomIdFromUrl, getTaskIdFromUrl } from "../../helpers/url";
 
 type TaskInputErrors = {
   name?: string;
@@ -29,6 +30,9 @@ export default function EditTaskScreen({
   navigation,
   route,
 }: RootStackScreenProps<typeof EDIT_TASK_ROUTE>) {
+  const urlTaskId = getTaskIdFromUrl(route);
+  const urlRoomId = getRoomIdFromUrl(route);
+
   const queryClient = useQueryClient();
   const { rooms } = useRoomsQuery();
   const { tasks, nextId: nextTaskId } = useTasksQuery();
@@ -55,10 +59,11 @@ export default function EditTaskScreen({
 
   useEffect(() => {
     const initialTask =
-      tasks.find((task) => task.id === route.params.taskId) ?? new Task();
+      tasks.find((task) => task.id === urlTaskId) ?? new Task();
 
-    const roomId = route.params.roomId ?? initialTask?.roomId ?? task.roomId;
+    const roomId = urlRoomId ?? initialTask?.roomId ?? task.roomId;
 
+    console.log(roomId);
     setTask({ ...initialTask, roomId });
   }, []);
 
@@ -88,14 +93,17 @@ export default function EditTaskScreen({
   };
 
   const completeTask = () => {
-    setTask((t) => ({ ...t, lastDone: new Date() }));
+    save({ ...task, lastDone: new Date() });
   };
 
-  const save = () => {
-    if (!task.name) {
+  const save = (taskToSave: Task) => {
+    if (!taskToSave.name) {
       setErrors((e) => ({ ...e, name: "You must enter a task name" }));
     } else {
-      saveTask({ ...task, id: route.params.taskId ?? nextTaskId });
+      saveTask({
+        ...taskToSave,
+        id: urlTaskId ?? nextTaskId,
+      });
     }
   };
 
@@ -153,7 +161,11 @@ export default function EditTaskScreen({
         Just did it!
       </Button>
 
-      <Button style={styles.saveButton} mode="contained" onPress={save}>
+      <Button
+        style={styles.saveButton}
+        mode="contained"
+        onPress={() => save(task)}
+      >
         Save
       </Button>
 

@@ -48,18 +48,26 @@ const getOverdueAmount = (task: Task) => {
 
 type TaskWithOverdueness = Task & { daysOverdue: number };
 
-export const OverdueTasks = () => {
+type Props = {
+  roomId?: number;
+};
+
+export const OverdueTasks = ({ roomId }: Props) => {
   const { tasks } = useTasksQuery();
   const { rooms } = useRoomsQuery();
 
-  const tasksWithOverdueness: TaskWithOverdueness[] = tasks.map((t) => ({
-    ...t,
-    daysOverdue: getOverdueDays(t),
-  }));
+  const tasksWithOverdueness: TaskWithOverdueness[] = tasks
+    .filter((t) => (roomId === undefined ? true : t.roomId === roomId))
+    .map((t) => ({
+      ...t,
+      daysOverdue: getOverdueDays(t),
+    }));
 
   const isTaskOverdue = (t: TaskWithOverdueness) => t.daysOverdue > 0;
   const hasOverdueTasks = tasksWithOverdueness.some(isTaskOverdue);
-  const overdueTasks = tasksWithOverdueness.filter(isTaskOverdue);
+  const overdueTasks = tasksWithOverdueness
+    .filter(isTaskOverdue)
+    .sort((a, b) => b.daysOverdue - a.daysOverdue);
 
   return hasOverdueTasks ? (
     <Card style={styles.container}>

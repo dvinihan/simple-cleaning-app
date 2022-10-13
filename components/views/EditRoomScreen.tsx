@@ -16,6 +16,7 @@ import {
   ROOMS_ROUTE,
   TASKS_ROUTE,
 } from "../../constants";
+import { getRoomIdFromUrl } from "../../helpers/url";
 import { useDeleteRoom } from "../../hooks/useDeleteRoom";
 import { useRoomsQuery } from "../../hooks/useRooms";
 import { useSaveRoom } from "../../hooks/useSaveRoom";
@@ -29,9 +30,11 @@ export default function EditRoomScreen({
   navigation,
   route,
 }: RootStackScreenProps<typeof EDIT_ROOM_ROUTE>) {
+  const urlRoomId = getRoomIdFromUrl(route);
+
   const queryClient = useQueryClient();
   const { rooms, nextId } = useRoomsQuery();
-  const roomId = route.params.roomId ?? nextId;
+  const roomId = urlRoomId ?? nextId;
   const { mutate: saveRoom, isLoading } = useSaveRoom({
     onSettled: () => {
       queryClient.invalidateQueries(ROOMS_QUERY_KEY);
@@ -53,7 +56,7 @@ export default function EditRoomScreen({
   const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
 
   useEffect(() => {
-    const initialRoom = rooms.find((room) => room.id === route.params.roomId);
+    const initialRoom = rooms.find((room) => room.id === urlRoomId);
     initialRoom && setRoom(initialRoom);
   }, []);
 

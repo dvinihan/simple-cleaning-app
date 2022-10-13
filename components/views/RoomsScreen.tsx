@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Card, FAB } from "react-native-paper";
 import { EDIT_ROOM_ROUTE, ROOMS_ROUTE, TASKS_ROUTE } from "../../constants";
 import { useRoomsQuery } from "../../hooks/useRooms";
