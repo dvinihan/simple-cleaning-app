@@ -10,6 +10,7 @@ import { getRoomIdFromUrl } from "../../helpers/url";
 import { useTasksQuery } from "../../hooks/useTasks";
 import { RootStackScreenProps } from "../../types";
 import { OverdueTasks } from "../OverdueTasks";
+import { UpcomingTasks } from "../UpcomingTasks";
 
 export default function TasksScreen({
   navigation,
@@ -25,6 +26,7 @@ export default function TasksScreen({
     <>
       <ScrollView>
         <OverdueTasks roomId={urlRoomId} />
+        <UpcomingTasks roomId={urlRoomId} />
         {tasksInRoom.map((task) => (
           <Card
             key={task.id}

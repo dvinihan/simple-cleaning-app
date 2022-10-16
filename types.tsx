@@ -59,3 +59,10 @@ export class Task {
     this.roomId = props?.roomId ?? -1;
   }
 }
+
+export type TaskWithDaysUntilDue = Task & {
+  /**
+   * A positive value means the task is due soon, while a negative value means it's overdue.
+   */
+  daysUntilDue: number;
+};
