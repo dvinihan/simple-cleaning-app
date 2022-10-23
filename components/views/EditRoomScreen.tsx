@@ -123,7 +123,13 @@ export default function EditRoomScreen({
       </Dialog>
 
       <Dialog
-        onDismiss={() => setShouldShowDeleteModal(false)}
+        onDismiss={() =>
+          setDiscardModalState?.({
+            show: false,
+            action: () => {},
+            hasChanges: true,
+          })
+        }
         visible={Boolean(discardModalState?.show)}
       >
         <Dialog.Content>

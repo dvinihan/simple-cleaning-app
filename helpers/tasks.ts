@@ -1,6 +1,6 @@
 import { Frequency } from "../constants";
 import { Task } from "../types";
-import { add, differenceInDays } from "date-fns";
+import { add, differenceInCalendarDays } from "date-fns";
 
 export const getFrequencyInDays = (
   frequencyType: Frequency,
@@ -32,6 +32,5 @@ export const getNextDueDate = (task: Task) => {
 
 export const getDaysUntilDue = (task: Task) => {
   const nextDue = getNextDueDate(task);
-  // could also use differenceInCalendarDays: https://date-fns.org/v2.29.3/docs/differenceInCalendarDays
-  return differenceInDays(nextDue, new Date());
+  return differenceInCalendarDays(nextDue, new Date());
 };

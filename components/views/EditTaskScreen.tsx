@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
 import {
   Button,
   Caption,
@@ -54,6 +54,7 @@ export default function EditTaskScreen({
   const [isFreqDialogVisible, setIsFreqDialogVisible] = useState(false);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const { discardModalState, setDiscardModalState } =
     useContext(DiscardModalContext) ?? {};
@@ -69,16 +70,42 @@ export default function EditTaskScreen({
     setTask({ ...initialTask, roomId });
   }, []);
 
+  const showAlert = useCallback(
+    (e) => {
+      console.log("vinihan - hasChanges");
+      if (hasChanges) {
+        e.preventDefault();
+
+        Alert.alert("Save changes?", "", [
+          { text: "No", style: "cancel", onPress: () => {} },
+          {
+            text: "Yes",
+            style: "default",
+            onPress: () => navigation.dispatch(e.data.action),
+          },
+        ]);
+        alert("");
+      }
+    },
+    [hasChanges, navigation]
+  );
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", showAlert);
+    navigation.addListener("beforeRemove", showAlert);
+
+    return () => {
+      window.removeEventListener("beforeunload", showAlert);
+      navigation.removeListener("beforeRemove", showAlert);
+    };
+  }, [showAlert, navigation]);
+
   const showRoomDialog = () => setIsRoomDialogVisible(true);
   const hideRoomDialog = () => setIsRoomDialogVisible(false);
   const showFreqDialog = () => setIsFreqDialogVisible(true);
   const hideFreqDialog = () => setIsFreqDialogVisible(false);
   const showDatePicker = () => setIsDatePickerVisible(true);
   const hideDatePicker = () => setIsDatePickerVisible(false);
-
-  const setHasChanges = (hasChanges: boolean) => {
-    setDiscardModalState?.({ show: false, action: () => {}, hasChanges });
-  };
 
   const onSelectRoom = (room: Room) => {
     setTask((t) => ({ ...t, roomId: room.id }));
@@ -275,33 +302,22 @@ export default function EditTaskScreen({
       </Dialog>
 
       <Dialog
-        onDismiss={() => setShouldShowDeleteModal(false)}
+        onDismiss={() =>
+          setDiscardModalState?.({
+            show: false,
+            action: () => {},
+            hasChanges: true,
+          })
+        }
         visible={Boolean(discardModalState?.show)}
       >
         <Dialog.Content>
           <Dialog.Title>Save changes?</Dialog.Title>
           <Dialog.Actions>
-            <Button
-              onPress={() => {
-                setDiscardModalState?.({
-                  show: false,
-                  action: () => {},
-                  hasChanges: false,
-                });
-                discardModalState?.action();
-              }}
-            >
-              No
-            </Button>
+            <Button>No</Button>
             <Button
               onPress={() => {
                 save(task);
-                setDiscardModalState?.({
-                  show: false,
-                  action: () => {},
-                  hasChanges: false,
-                });
-                discardModalState?.action();
               }}
             >
               Yes

@@ -23,7 +23,7 @@ export const OverdueTasks = ({ roomId }: Props) => {
       daysUntilDue: getDaysUntilDue(t),
     }));
 
-  const isTaskOverdue = (t: TaskWithDaysUntilDue) => t.daysUntilDue < 0;
+  const isTaskOverdue = (t: TaskWithDaysUntilDue) => t.daysUntilDue <= 0;
   const hasOverdueTasks = tasksWithOverdueness.some(isTaskOverdue);
   const overdueTasks = tasksWithOverdueness
     .filter(isTaskOverdue)
@@ -43,7 +43,11 @@ export const OverdueTasks = ({ roomId }: Props) => {
               <Text> in </Text>
               <Text style={styles.bold}>{room?.name}, </Text>
               <Text style={styles.red}>
-                {formatDuration({ days: task.daysUntilDue * -1 })} overdue
+                {task.daysUntilDue === 0
+                  ? "Due today"
+                  : `${formatDuration({
+                      days: task.daysUntilDue * -1,
+                    })} overdue`}
               </Text>
             </Link>
           </Card>
