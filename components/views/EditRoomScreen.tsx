@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import {
   ActivityIndicator,
@@ -16,6 +16,7 @@ import {
   ROOMS_ROUTE,
   TASKS_ROUTE,
 } from "../../constants";
+import { DiscardModalContext } from "../../context/DiscardModalContext";
 import { getRoomIdFromUrl } from "../../helpers/url";
 import { useDeleteRoom } from "../../hooks/useDeleteRoom";
 import { useRoomsQuery } from "../../hooks/useRooms";
@@ -55,6 +56,13 @@ export default function EditRoomScreen({
   const [errors, setErrors] = useState<RoomInputErrors>({});
   const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
 
+  const { discardModalState, setDiscardModalState } =
+    useContext(DiscardModalContext) ?? {};
+
+  const setHasChanges = (hasChanges: boolean) => {
+    setDiscardModalState?.({ show: false, action: () => {}, hasChanges });
+  };
+
   useEffect(() => {
     const initialRoom = rooms.find((room) => room.id === urlRoomId);
     initialRoom && setRoom(initialRoom);
@@ -65,6 +73,7 @@ export default function EditRoomScreen({
       setErrors((e) => ({ ...e, name: "You must enter a room name" }));
     } else {
       saveRoom({ ...room, id: roomId });
+      setHasChanges(false);
     }
   };
 
@@ -77,7 +86,10 @@ export default function EditRoomScreen({
       <TextInput
         label="Name"
         value={room?.name}
-        onChangeText={(text) => setRoom({ ...room, name: text })}
+        onChangeText={(text) => {
+          setRoom({ ...room, name: text });
+          setHasChanges(true);
+        }}
         style={styles.textInput}
       />
       {errors.name && <Caption style={styles.error}>{errors.name}</Caption>}
@@ -106,6 +118,42 @@ export default function EditRoomScreen({
           <Dialog.Actions>
             <Button onPress={deleteRoom}>Yes</Button>
             <Button onPress={() => setShouldShowDeleteModal(false)}>No</Button>
+          </Dialog.Actions>
+        </Dialog.Content>
+      </Dialog>
+
+      <Dialog
+        onDismiss={() => setShouldShowDeleteModal(false)}
+        visible={Boolean(discardModalState?.show)}
+      >
+        <Dialog.Content>
+          <Dialog.Title>Save changes?</Dialog.Title>
+          <Dialog.Actions>
+            <Button
+              onPress={() => {
+                setDiscardModalState?.({
+                  show: false,
+                  action: () => {},
+                  hasChanges: false,
+                });
+                discardModalState?.action();
+              }}
+            >
+              No
+            </Button>
+            <Button
+              onPress={() => {
+                save();
+                setDiscardModalState?.({
+                  show: false,
+                  action: () => {},
+                  hasChanges: false,
+                });
+                discardModalState?.action();
+              }}
+            >
+              Yes
+            </Button>
           </Dialog.Actions>
         </Dialog.Content>
       </Dialog>

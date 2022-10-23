@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import {
   Button,
   Caption,
   Dialog,
   FAB,
-  Modal,
   RadioButton,
   Surface,
   Text,
@@ -21,6 +20,7 @@ import { DatePickerModal } from "react-native-paper-dates";
 import { SingleChange } from "react-native-paper-dates/lib/typescript/Date/Calendar";
 import { useDeleteTask } from "../../hooks/useDeleteTask";
 import { getRoomIdFromUrl, getTaskIdFromUrl } from "../../helpers/url";
+import { DiscardModalContext } from "../../context/DiscardModalContext";
 
 type TaskInputErrors = {
   name?: string;
@@ -55,6 +55,9 @@ export default function EditTaskScreen({
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [shouldShowDeleteModal, setShouldShowDeleteModal] = useState(false);
 
+  const { discardModalState, setDiscardModalState } =
+    useContext(DiscardModalContext) ?? {};
+
   const [errors, setErrors] = useState<TaskInputErrors>({});
 
   useEffect(() => {
@@ -63,7 +66,6 @@ export default function EditTaskScreen({
 
     const roomId = urlRoomId ?? initialTask?.roomId ?? task.roomId;
 
-    console.log(roomId);
     setTask({ ...initialTask, roomId });
   }, []);
 
@@ -74,9 +76,14 @@ export default function EditTaskScreen({
   const showDatePicker = () => setIsDatePickerVisible(true);
   const hideDatePicker = () => setIsDatePickerVisible(false);
 
+  const setHasChanges = (hasChanges: boolean) => {
+    setDiscardModalState?.({ show: false, action: () => {}, hasChanges });
+  };
+
   const onSelectRoom = (room: Room) => {
     setTask((t) => ({ ...t, roomId: room.id }));
     hideRoomDialog();
+    setHasChanges(true);
   };
 
   const onSelectFrequency = (frequency: Frequency) => {
@@ -89,6 +96,7 @@ export default function EditTaskScreen({
     if (date) {
       setTask((t) => ({ ...t, lastDone: date }));
       hideDatePicker();
+      setHasChanges(true);
     }
   };
 
@@ -104,6 +112,7 @@ export default function EditTaskScreen({
         ...taskToSave,
         id: urlTaskId ?? nextTaskId,
       });
+      setHasChanges(false);
     }
   };
 
@@ -122,7 +131,10 @@ export default function EditTaskScreen({
       <TextInput
         label="Name"
         value={task?.name}
-        onChangeText={(text) => setTask({ ...task, name: text })}
+        onChangeText={(text) => {
+          setTask({ ...task, name: text });
+          setHasChanges(true);
+        }}
         style={styles.textInput}
       />
       {errors.name && <Caption style={styles.error}>{errors.name}</Caption>}
@@ -139,9 +151,16 @@ export default function EditTaskScreen({
           onChangeText={(text) => {
             const newAmount = text ? parseInt(text) : 0;
             setTask((t) => ({ ...t, frequencyAmount: newAmount }));
+            setHasChanges(true);
           }}
         />
-        <Button onPress={showFreqDialog} mode="outlined">
+        <Button
+          onPress={() => {
+            showFreqDialog();
+            setHasChanges(true);
+          }}
+          mode="outlined"
+        >
           {task.frequencyType}
         </Button>
       </View>
@@ -251,6 +270,42 @@ export default function EditTaskScreen({
           <Dialog.Actions>
             <Button onPress={deleteTask}>Yes</Button>
             <Button onPress={() => setShouldShowDeleteModal(false)}>No</Button>
+          </Dialog.Actions>
+        </Dialog.Content>
+      </Dialog>
+
+      <Dialog
+        onDismiss={() => setShouldShowDeleteModal(false)}
+        visible={Boolean(discardModalState?.show)}
+      >
+        <Dialog.Content>
+          <Dialog.Title>Save changes?</Dialog.Title>
+          <Dialog.Actions>
+            <Button
+              onPress={() => {
+                setDiscardModalState?.({
+                  show: false,
+                  action: () => {},
+                  hasChanges: false,
+                });
+                discardModalState?.action();
+              }}
+            >
+              No
+            </Button>
+            <Button
+              onPress={() => {
+                save(task);
+                setDiscardModalState?.({
+                  show: false,
+                  action: () => {},
+                  hasChanges: false,
+                });
+                discardModalState?.action();
+              }}
+            >
+              Yes
+            </Button>
           </Dialog.Actions>
         </Dialog.Content>
       </Dialog>

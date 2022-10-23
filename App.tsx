@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import useCachedResources from "./hooks/useCachedResources";
 import Navigation from "./components/Navigation";
 import { StrictMode } from "react";
+import { DiscardModalProvider } from "./context/DiscardModalContext";
 
 const theme = {
   ...DefaultTheme,
@@ -29,7 +30,9 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
             <PaperProvider theme={theme}>
-              <Navigation />
+              <DiscardModalProvider>
+                <Navigation />
+              </DiscardModalProvider>
             </PaperProvider>
             <StatusBar />
           </SafeAreaProvider>
